@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To Do</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <% if (day.includes("Saturday") || day.includes("Sunday")){ %>
@@ -14,14 +15,17 @@
         <h1 style="color : darkslategray"><%= day %></h1>
     <%}%>
 
-<ul>
-    <% newListItem.map((item)=>{ %>
+    <% newListItems.map((item)=>{ %>
+       <% if(item === ""){ %>
+           <% return%>
+       <% }else{ %>
         <li> <%= item %> </li> 
+        <%}%>
     <%})%>
-</ul>   
+
 <form action="/" method="post">
     <input type="text" name="newItem"  placeholder="Make a note...">
-    <button type="submit" name="button">Save</button>
+    <button type="submit" class="btn" name="button">Save</button>
 </form>
 </body>
 </html>

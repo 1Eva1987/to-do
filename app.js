@@ -7,19 +7,15 @@ let item = "";
 let itemsArray = [];
 
 app.use(bodyParser.urlencoded({ extended: "true" }));
+app.use(express.static("public"));
 app.set("view engine", "ejs");
 
 app.get("/", (req, res) => {
-  const today = new Date();
-  const currentDate = today.getDay();
-  if (currentDate === 6 || currentDate === 0) {
-    res.render("list", { day: moment.format("LLLL") });
-  } else {
-    res.render("list", {
-      day: moment().format("LLLL"),
-      newListItem: itemsArray,
-    });
-  }
+  res.render("list", {
+    day: moment().format("LLLL"),
+    newListItems: itemsArray,
+    as: "labas",
+  });
 });
 
 app.post("/", (req, res) => {
