@@ -9,23 +9,20 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <% if (day.includes("Saturday") || day.includes("Sunday")){ %>
-        <h1 style="color: #800080"><%= day %></h1>
-    <% } else { %>
-        <h1 style="color : darkslategray"><%= day %></h1>
-    <%}%>
-
+ 
+    <h1><%= listTitle %></h1>    
     <% newListItems.map((item)=>{ %>
        <% if(item === ""){ %>
            <% return%>
        <% }else{ %>
         <li> <%= item %> </li> 
+        <input type="checkbox">
         <%}%>
     <%})%>
 
 <form action="/" method="post">
     <input type="text" name="newItem"  placeholder="Make a note...">
-    <button type="submit" class="btn" name="button">Save</button>
+    <button type="submit" class="btn" name="list" value=<%= listTitle %>>Save</button>
 </form>
 </body>
 </html>
