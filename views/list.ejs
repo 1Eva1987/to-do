@@ -1,28 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To Do</title>
-    <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
- 
-    <h1><%= listTitle %></h1>    
+<%- include("header") -%>
+<h1><%= listTitle %></h1>
+<div class="list-container"> 
+    <ul class="list" > 
     <% newListItems.map((item)=>{ %>
        <% if(item === ""){ %>
            <% return%>
        <% }else{ %>
-        <li> <%= item %> </li> 
+        <div class="li-item">
         <input type="checkbox">
+        <li> <%= item %> </li> 
+        </div>
         <%}%>
     <%})%>
+    </ul>
+</div>
+    <form action="/" method="post">
+    <div class="form">
+        <input type="text" name="newItem"  placeholder="Make a note...">
+        <button type="submit" class="btn" name="list" value=<%= listTitle %>>Save</button>
+        </div>
+    </form>
 
-<form action="/" method="post">
-    <input type="text" name="newItem"  placeholder="Make a note...">
-    <button type="submit" class="btn" name="list" value=<%= listTitle %>>Save</button>
-</form>
-</body>
-</html>
+    <%- include("footer") -%>
