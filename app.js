@@ -1,10 +1,43 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 const moment = require("moment");
 const app = express();
 
-const itemsArray = [];
-const workItems = [];
+// const itemsArray = [];
+// const workItems = [];
+
+// connecting to mongoDB
+mongoose.connect("mongodb://localhost:27017/todolistDB", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+// creating Shcema
+const itemsShcema = new mongoose.Schema({
+  name: String,
+});
+
+// creating model
+const Item = mongoose.model("Item", itemsShcema);
+
+// creating item in db
+
+const item1 = new Item({
+  name: "welcome to your to-do list :)",
+});
+const item2 = new Item({
+  name: "Feel free to add things you don't want to forget!",
+});
+
+const defaultArray = [item1, item2];
+// Item.insertMany(defaultArray)
+//   .then(() => {
+//     console.log("success");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
 
 app.use(bodyParser.urlencoded({ extended: "true" }));
 app.use(express.static("public"));
@@ -13,12 +46,18 @@ app.set("view engine", "ejs");
 // home route
 // GET
 app.get("/", (req, res) => {
-  res.render("list", {
-    listTitle: moment().format("dddd, MMM Do"),
-    newListItems: itemsArray,
-    as: "labas",
-  });
+  Item.find()
+    .then((items) => {
+      res.render("list", {
+        listTitle: moment().format("dddd, MMM Do"),
+        newListItems: items,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
+
 // POST
 app.post("/", (req, res) => {
   let item = req.body.newItem;
