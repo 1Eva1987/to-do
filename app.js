@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -8,7 +9,7 @@ const app = express();
 // const workItems = [];
 
 // connecting to mongoDB
-mongoose.connect("mongodb://localhost:27017/todolistDB", {
+mongoose.connect(process.env.DATABASE_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

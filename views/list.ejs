@@ -2,7 +2,7 @@
 <h1><%= listTitle %></h1>
 <div class="list-container"> 
     <ul class="list" > 
-    <% newListItems.map((item)=>{ %>
+    <% newListItems.forEach((item)=>{ %>
        <% if(item === ""){ %>
            <% return%>
        <% }else{ %>
