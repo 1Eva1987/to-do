@@ -1,6 +1,6 @@
 <%- include("header") -%>
 <p><%= date %></p>
-<h1><%= listTitle %></h1>
+<h1><%=listTitle%></h1>
 <div class="list-container"> 
     <ul class="list" > 
     <% newListItems.forEach((item)=>{ %>
@@ -9,9 +9,10 @@
        <% }else{ %>
         <form action="/delete" method="post">
             <div class="li-item">
-                <input name = "checkbox" value="<%= item._id %>" type="checkbox" onChange="this.form.submit()">
+                <input name = "checkbox" value="<%= item._id%>" type="checkbox" onChange="this.form.submit()">
                 <li> <%= item.name %> </li> 
             </div>
+            <input type="hidden" name = "listName" value = "<%= listTitle %>">
         </form>
         <%}%>
     <%})%>
