@@ -65,6 +65,7 @@ app.get("/", (req, res) => {
 });
 
 // POST
+// add item
 app.post("/", (req, res) => {
   let item = req.body.newItem;
   // checking if new item belongs to work list by adding value to submit button
@@ -72,10 +73,27 @@ app.post("/", (req, res) => {
     workItems.push(item);
     res.redirect("/work");
   } else {
-    const newItem = new Item({ name: item });
-    newItem.save();
-    res.redirect("/");
+    if (item === "") {
+      return;
+    } else {
+      const newItem = new Item({ name: item });
+      newItem.save();
+      res.redirect("/");
+    }
   }
+});
+
+// POST
+// delete item
+app.post("/delete", (req, res) => {
+  const checkedItemId = req.body.checkbox;
+  console.log(checkedItemId);
+  Item.findByIdAndDelete(checkedItemId)
+    .then(() => {
+      console.log("success");
+      res.redirect("/");
+    })
+    .catch((err) => console.log(err));
 });
 
 // work route

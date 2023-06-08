@@ -6,16 +6,18 @@
        <% if(item === ""){ %>
            <% return%>
        <% }else{ %>
-        <div class="li-item">
-        <input type="checkbox">
-        <li> <%= item.name %> </li> 
-        </div>
+        <form action="/delete" method="post">
+            <div class="li-item">
+                <input name = "checkbox" value="<%= item._id %>" type="checkbox" onChange="this.form.submit()">
+                <li> <%= item.name %> </li> 
+            </div>
+        </form>
         <%}%>
     <%})%>
     </ul>
 </div>
     <form action="/" method="post">
-    <div class="form">
+    <div class="form-create">
         <input type="text" name="newItem"  placeholder="Make a note...">
         <button type="submit" class="btn" name="list" value=<%= listTitle %>>Save</button>
         </div>

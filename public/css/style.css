@@ -26,7 +26,7 @@ h1 {
   display: flex;
   justify-content: space-between;
 }
-.form {
+.form-create {
   padding-top: 20px;
   max-width: 200px;
   margin: auto;
