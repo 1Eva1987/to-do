@@ -5,9 +5,6 @@ const mongoose = require("mongoose");
 const moment = require("moment");
 const app = express();
 
-// const itemsArray = [];
-// const workItems = [];
-
 // connecting to mongoDB
 mongoose
   .connect(process.env.DATABASE_URL, {
@@ -21,16 +18,17 @@ mongoose
     console.error("Error connecting to MongoDB:", error);
   });
 
-// creating Shcema
-const itemsShcema = new mongoose.Schema({
-  name: String,
-});
+app.use(bodyParser.urlencoded({ extended: "true" }));
+app.use(express.static("public"));
+app.set("view engine", "ejs");
 
+// creating Shcema
+const itemsShcema = {
+  name: String,
+};
 // creating model
 const Item = mongoose.model("Item", itemsShcema);
-
-// creating item in db
-
+// creating items in db
 const item1 = new Item({
   name: "welcome to your to-do list :)",
 });
@@ -39,27 +37,27 @@ const item2 = new Item({
 });
 
 const defaultArray = [item1, item2];
-// Item.insertMany(defaultArray)
-//   .then(() => {
-//     console.log("success");
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
-
-app.use(bodyParser.urlencoded({ extended: "true" }));
-app.use(express.static("public"));
-app.set("view engine", "ejs");
 
 // home route
 // GET
 app.get("/", (req, res) => {
   Item.find()
     .then((items) => {
-      res.render("list", {
-        listTitle: moment().format("dddd, MMM Do"),
-        newListItems: items,
-      });
+      if (items.length === 0) {
+        Item.insertMany(defaultArray)
+          .then(() => {
+            console.log("success");
+            res.redirect("/");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        res.render("list", {
+          listTitle: moment().format("dddd, MMM Do"),
+          newListItems: items,
+        });
+      }
     })
     .catch((err) => {
       console.log(err);
@@ -74,7 +72,8 @@ app.post("/", (req, res) => {
     workItems.push(item);
     res.redirect("/work");
   } else {
-    itemsArray.push(item);
+    const newItem = new Item({ name: item });
+    newItem.save();
     res.redirect("/");
   }
 });
