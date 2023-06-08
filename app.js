@@ -22,31 +22,34 @@ app.use(bodyParser.urlencoded({ extended: "true" }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
-// creating Shcema
+// creating Shcema for new to do items
 const itemsShcema = {
   name: String,
 };
-// creating model
 const Item = mongoose.model("Item", itemsShcema);
-// creating items in db
+// creating items in items db
 const item1 = new Item({
   name: "welcome to your to-do list :)",
 });
 const item2 = new Item({
   name: "Feel free to add things you don't want to forget!",
 });
-
 const defaultArray = [item1, item2];
 
-// home route
-// GET
+//  creating shcema for new lists
+const listShema = {
+  name: String,
+  items: [itemsShcema],
+};
+const List = mongoose.model("List", listShema);
+
+// GET root route
 app.get("/", (req, res) => {
   Item.find()
     .then((items) => {
       if (items.length === 0) {
         Item.insertMany(defaultArray)
           .then(() => {
-            console.log("success");
             res.redirect("/");
           })
           .catch((err) => {
@@ -54,7 +57,8 @@ app.get("/", (req, res) => {
           });
       } else {
         res.render("list", {
-          listTitle: moment().format("dddd, MMM Do"),
+          date: moment().format("dddd, MMM Do"),
+          listTitle: "Today",
           newListItems: items,
         });
       }
@@ -64,27 +68,54 @@ app.get("/", (req, res) => {
     });
 });
 
-// POST
-// add item
-app.post("/", (req, res) => {
-  let item = req.body.newItem;
-  // checking if new item belongs to work list by adding value to submit button
-  if (req.body.list === "Work") {
-    workItems.push(item);
-    res.redirect("/work");
-  } else {
-    if (item === "") {
-      return;
+// GET custom list route
+app.get("/:customListName", (req, res) => {
+  const customListName = req.params.customListName;
+  console.log(customListName);
+  List.findOne({ name: customListName }).then((foundList) => {
+    if (!foundList) {
+      console.log("doesnt exist");
+      const list = new List({
+        name: customListName,
+        items: defaultArray,
+      });
+      list.save();
+      res.redirect("/" + customListName);
     } else {
-      const newItem = new Item({ name: item });
-      newItem.save();
+      console.log("Exists");
+      res.render("list", {
+        date: moment().format("dddd, MMM Do"),
+        listTitle: foundList.name,
+        newListItems: foundList.items,
+      });
+    }
+  });
+});
+
+// POST
+// Add item to the list
+app.post("/", (req, res) => {
+  const itemName = req.body.newItem;
+  const listName = req.body.list;
+  if (itemName === "") {
+    return;
+  } else {
+    const item = new Item({ name: itemName });
+    if (listName === "Today") {
+      item.save();
       res.redirect("/");
+    } else {
+      List.findOne({ name: listName }).then((foundList) => {
+        foundList.items.push(item);
+        foundList.save();
+      });
+      res.redirect("/" + listName);
     }
   }
 });
 
 // POST
-// delete item
+// Delete item
 app.post("/delete", (req, res) => {
   const checkedItemId = req.body.checkbox;
   console.log(checkedItemId);
@@ -94,23 +125,6 @@ app.post("/delete", (req, res) => {
       res.redirect("/");
     })
     .catch((err) => console.log(err));
-});
-
-// work route
-// GET
-app.get("/work", (req, res) => {
-  res.render("list", { listTitle: "Work List", newListItems: workItems });
-});
-// POST
-app.post("/work", (req, res) => {
-  let item = req.body.newItem;
-  workItems.push(item);
-  res.redirect("/work");
-});
-
-// about route
-app.get("/about", (req, res) => {
-  res.render("about");
 });
 
 app.listen(3000, () => {
